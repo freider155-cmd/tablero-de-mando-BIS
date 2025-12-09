@@ -152,6 +152,18 @@ def main():
 
     st.title("Tablero de Mando — MVEI (Métrica de Valor Estratégico de la Innovación)")
 
+    # Marca de licencia en la parte superior derecha
+    st.markdown(
+        """
+        <div style="position: fixed; top: 60px; right: 20px; font-size: 12px; color: #333; text-align: right; z-index: 999; background-color: #f0f0f0; padding: 8px 12px; border-radius: 4px; border-left: 3px solid #1f77b4;">
+            <div style="font-weight: bold; color: #1f77b4;">Licencia MIT</div>
+            <div style="margin-top: 2px;">© 2025 Freider Barbosa</div>
+            <div><a href="mailto:freider155@gmail.com" style="color: #0066cc; text-decoration: none; font-size: 11px;">freider155@gmail.com</a></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
     # Sidebar: configuraciones
     st.sidebar.header("Configuración — Pesos & Metas")
 

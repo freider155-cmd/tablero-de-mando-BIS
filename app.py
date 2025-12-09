@@ -172,19 +172,19 @@ def main():
     # Default sample values
     default_weights = {
         "Estrategia": 0.4,
-        "Organización": 0.25,
+        "Organizacional": 0.25,
         "Cliente": 0.25,
         "Liderazgo": 0.10,
     }
 
     with st.sidebar.form(key="weights_form"):
         w_e = st.number_input("Peso - Estratégica", min_value=0.0, max_value=1.0, value=default_weights["Estrategia"], step=0.01, format="%.4f")
-        w_o = st.number_input("Peso - Organizacional", min_value=0.0, max_value=1.0, value=default_weights["Organización"], step=0.01, format="%.4f")
+        w_o = st.number_input("Peso - Organizacional", min_value=0.0, max_value=1.0, value=default_weights["Organizacional"], step=0.01, format="%.4f")
         w_c = st.number_input("Peso - Cliente", min_value=0.0, max_value=1.0, value=default_weights["Cliente"], step=0.01, format="%.4f")
         w_l = st.number_input("Peso - Liderazgo", min_value=0.0, max_value=1.0, value=default_weights["Liderazgo"], step=0.01, format="%.4f")
         weights_submit = st.form_submit_button("Aplicar pesos")
 
-    weights_raw = {"Estrategia": w_e, "Organización": w_o, "Cliente": w_c, "Liderazgo": w_l}
+    weights_raw = {"Estrategia": w_e, "Organizacional": w_o, "Cliente": w_c, "Liderazgo": w_l}
     weights, normalized_flag = ensure_weights_sum(weights_raw)
 
     if normalized_flag:
@@ -195,28 +195,25 @@ def main():
 
     # Allow metrics ranges in the sidebar
     with st.sidebar.expander("Metas / Rango por métrica (Min / Max)", expanded=True):
-        # Provide default minima/maxima for the example metrics
+        # Provide default minima/maxima for each dimension
         default_ranges = {
-            "Tasa de Adopción (%)": (0.0, 100.0),
-            "Reducción de Tiempo (h)": (0.0, 40.0),
-            "NPS (puntos)": (-100.0, 100.0),
-            "Número de Patentes": (0.0, 50.0),
+            "Estrategia": (0.0, 100.0),
+            "Organizacional": (0.0, 40.0),
+            "Cliente": (-100.0, 100.0),
+            "Liderazgo": (0.0, 50.0),
         }
 
-        ta_min = st.number_input("Tasa de Adopción - Min", value=default_ranges["Tasa de Adopción (%)"][0], format="%.3f")
-        ta_max = st.number_input("Tasa de Adopción - Max", value=default_ranges["Tasa de Adopción (%)"][1], format="%.3f")
+        ta_min = st.number_input("Estrategia - Min", value=default_ranges["Estrategia"][0], format="%.3f")
+        ta_max = st.number_input("Estrategia - Max", value=default_ranges["Estrategia"][1], format="%.3f")
 
-        rt_min = st.number_input("Reducción de Tiempo - Min", value=default_ranges["Reducción de Tiempo (h) ".strip()][0] if "Reducción de Tiempo (h)" in default_ranges else default_ranges["Reducción de Tiempo (h) ".strip()][0], format="%.3f")
-        # The above reference to a key with trailing spaces might fail in some python versions if not normalized -- ensure correct defaults
-        rt_min = ta_min if False else rt_min
+        rt_min = st.number_input("Organizacional - Min", value=default_ranges["Organizacional"][0], format="%.3f")
+        rt_max = st.number_input("Organizacional - Max", value=default_ranges["Organizacional"][1], format="%.3f")
 
-        rt_max = st.number_input("Reducción de Tiempo - Max", value=default_ranges["Reducción de Tiempo (h)"][1], format="%.3f")
+        nps_min = st.number_input("Cliente - Min", value=default_ranges["Cliente"][0], format="%.3f")
+        nps_max = st.number_input("Cliente - Max", value=default_ranges["Cliente"][1], format="%.3f")
 
-        nps_min = st.number_input("NPS - Min", value=default_ranges["NPS (puntos)"][0], format="%.3f")
-        nps_max = st.number_input("NPS - Max", value=default_ranges["NPS (puntos)"][1], format="%.3f")
-
-        pat_min = st.number_input("Número de Patentes - Min", value=default_ranges["Número de Patentes"][0], format="%.3f")
-        pat_max = st.number_input("Número de Patentes - Max", value=default_ranges["Número de Patentes"][1], format="%.3f")
+        pat_min = st.number_input("Liderazgo - Min", value=default_ranges["Liderazgo"][0], format="%.3f")
+        pat_max = st.number_input("Liderazgo - Max", value=default_ranges["Liderazgo"][1], format="%.3f")
 
     # Main: Input datos actuales
     st.header("Entradas — Valores actuales de métricas")
@@ -225,36 +222,36 @@ def main():
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        ta_value = st.number_input("Tasa de Adopción (%)", value=20.0, step=0.1, format="%.3f")
+        ta_value = st.number_input("Estrategia", value=20.0, step=0.1, format="%.3f")
 
     with col2:
-        rt_value = st.number_input("Reducción de Tiempo (h)", value=4.0, step=0.1, format="%.3f")
+        rt_value = st.number_input("Organizacional", value=4.0, step=0.1, format="%.3f")
 
     with col3:
-        nps_value = st.number_input("NPS (puntos)", value=10.0, step=0.5, format="%.3f")
+        nps_value = st.number_input("Cliente", value=10.0, step=0.5, format="%.3f")
 
     with col4:
-        pat_value = st.number_input("Número de Patentes", value=2.0, step=1.0, format="%.3f")
+        pat_value = st.number_input("Liderazgo", value=2.0, step=1.0, format="%.3f")
 
     # Build dictionaries for normalization and labels mapping to the 4 MVEI dimensions
     # Mapeo ejemplo: cada dimensión puede estar representada por una métrica clave.
     raw_values = {
         "Estrategia": ta_value,
-        "Organización": rt_value,
+        "Organizacional": rt_value,
         "Cliente": nps_value,
         "Liderazgo": pat_value,
     }
 
     mins = {
         "Estrategia": ta_min,
-        "Organización": rt_min,
+        "Organizacional": rt_min,
         "Cliente": nps_min,
         "Liderazgo": pat_min,
     }
 
     maxs = {
         "Estrategia": ta_max,
-        "Organización": rt_max,
+        "Organizacional": rt_max,
         "Cliente": nps_max,
         "Liderazgo": pat_max,
     }
